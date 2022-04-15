@@ -1,0 +1,7 @@
+POST http://localhost:3000/test.json
+content-type: application/json
+
+{
+    "firstname": "toto",
+    "birthdate": "2022-04-01"
+}

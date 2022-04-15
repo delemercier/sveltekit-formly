@@ -1,0 +1,284 @@
+[
+	{
+		"type": "section",
+		"name": "section1",
+		"title": "Section 1 guys !",
+		"open": "true",
+		"lock": "false"
+	},
+	{
+		"type": "table",
+		"name": "mytable",
+		"attributes": {
+			"tableClasses": {
+				"thead": "coucou"
+			},
+			"label": "Discount grid",
+			"min": 0,
+			"max": 3
+		},
+		"extra": {
+			"options": [
+				{
+					"type": "input",
+					"name": "field1",
+					"attributes": {
+						"label": "Field 1"
+					},
+					"rules": ["required"]
+				},
+				{
+					"type": "input",
+					"name": "birth",
+					"value": "now",
+					"attributes": {
+						"type": "date",
+						"label": "Date de naissance de ta vie de ouf"
+					},
+					"rules": ["date:now <= date <= now+1m:firstDay"]
+				},
+				{
+					"type": "select",
+					"name": "country",
+					"rules": ["required"],
+					"attributes": {
+						"label": "select country très long ici"
+					},
+					"extra": {
+						"options": [
+							{
+								"value": null,
+								"title": "Select a country"
+							},
+							{
+								"value": "FR",
+								"title": "France"
+							},
+							{
+								"value": "EN",
+								"title": "England"
+							}
+						]
+					}
+				}
+			]
+		}
+	},
+	{
+		"type": "checkbox",
+		"name": "check",
+		"value": [1, 2],
+		"attributes": {
+			"label": "Sélectionner une box",
+			"classes": "red"
+		},
+		"rules": ["required"],
+		"extra": {
+			"options": [
+				{
+					"value": 1,
+					"title": "checkbox 1"
+				},
+				{
+					"value": 2
+				}
+			]
+		}
+	},
+	{
+		"type": "textarea",
+		"name": "textarea",
+		"description": "Ceci est une description toto. en réalité c'est une très longue description",
+		"rules": ["required"],
+		"attributes": {
+			"label": "Commentaire",
+			"ignored": "false",
+			"canUpdate": "once"
+		}
+	},
+	{
+		"type": "radio",
+		"name": "radiofield",
+		"valueExpr": "1",
+		"extra": {
+			"options": [
+				{
+					"value": 1,
+					"title": "radio 1"
+				},
+				{
+					"value": 2,
+					"title": "radio 2"
+				}
+			]
+		}
+	},
+	{
+		"type": "section",
+		"name": "section2",
+		"title": "Section 2 guys !",
+		"open": "true",
+		"lock": "true"
+	},
+	{
+		"type": "input",
+		"name": "birthdate",
+		"value": "now:lastDay",
+		"attributes": {
+			"type": "date",
+			"label": "Entrer votre date de naissance"
+		},
+		"rules": ["required", "date:now <= date <= now+1m:firstDay"]
+	},
+	{
+		"type": "input",
+		"name": "password",
+		"valueExpr": "`${v.textarea} ${v.check?.join(' - ')}`",
+		"attributes": {
+			"label": "Mot de passe"
+		},
+		"rules": ["required"]
+	},
+	{
+		"type": "input",
+		"name": "passwordConfirm",
+		"valueExpr": "v.password",
+		"attributes": {
+			"label": "Confirmer le mot de passe"
+		},
+		"rules": ["required", "confirm:password"]
+	},
+	{
+		"type": "input",
+		"name": "email",
+		"value": "toto@gmail.com",
+		"attributes": {
+			"type": "email",
+			"classes": "form-control input input-primary w-full",
+			"placeholder": "Email"
+		},
+		"rules": ["email"]
+	},
+	{
+		"type": "select",
+		"name": "country",
+		"rules": ["required"],
+		"attributes": {
+			"label": "select country"
+		},
+		"valueExpr": "v.radiofield === 2 ? 'FR': 'EN'",
+		"extra": {
+			"options": [
+				{
+					"value": null,
+					"title": "Select a country"
+				},
+				{
+					"value": "FR",
+					"title": "France"
+				},
+				{
+					"value": "EN",
+					"title": "England"
+				},
+				{
+					"value": "IT",
+					"title": "Italy",
+					"visible": "1 +1 === 32"
+				}
+			]
+		}
+	},
+	{
+		"type": "select",
+		"name": "city",
+		"rules": ["required"],
+		"attributes": {
+			"label": "select city"
+		},
+		"extra": {
+			"cascaded": "country",
+			"options": [
+				{
+					"value": null,
+					"title": "Select a city"
+				},
+				{
+					"value": "Paris",
+					"title": "Paris",
+					"cascaded": "FR"
+				},
+				{
+					"value": "Rennes",
+					"title": "Rennes",
+					"cascaded": "FR"
+				},
+				{
+					"value": "London",
+					"title": "London",
+					"cascaded": "EN"
+				},
+				{
+					"value": "Newcastle",
+					"title": "Newcastle",
+					"cascaded": "EN"
+				}
+			]
+		}
+	},
+	{
+		"type": "select",
+		"name": "commune",
+		"rules": ["required"],
+		"attributes": {
+			"label": "select commune"
+		},
+		"extra": {
+			"cascaded": "city",
+			"options": [
+				{
+					"value": null,
+					"title": "Select a commune"
+				},
+				{
+					"value": "Clichy",
+					"title": "Clichy",
+					"cascaded": "Paris"
+				},
+				{
+					"value": "Janzé",
+					"title": "Janzé",
+					"cascaded": "Rennes"
+				},
+				{
+					"value": "Saint-Grégoire",
+					"title": "Saint-Grégoire",
+					"cascaded": "Rennes"
+				}
+			]
+		}
+	},
+	{
+		"type": "autocomplete",
+		"name": "autocomplete",
+		"rules": ["required"],
+		"attributes": {
+			"id": "id-field-autocomplete",
+			"placeholder": "Insert",
+			"max": 10
+		},
+		"extra": {
+			"multiple": true,
+			"options": [
+				{
+					"title": "item 1",
+					"value": 1
+				},
+				{
+					"title": "item 2",
+					"value": 2
+				}
+			]
+		}
+	}
+]
