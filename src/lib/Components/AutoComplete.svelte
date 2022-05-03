@@ -33,7 +33,6 @@
 	const dispatch = createEventDispatcher();
 
 	const refresh = (e) => {
-		if (e?.key === 'Tab') return;
 		if (e) {
 			search = e.target.value;
 		}
@@ -51,25 +50,6 @@
 			name: field.name,
 			value: field.value
 		});
-	};
-
-	const handleTab = (e) => {
-		if (e?.key === 'Tab') {
-			e.preventDefault();
-			if (showOptions) {
-				let option = undefined;
-				for (const opt of optionsFiltered) {
-					const notInOptions = field.extra.multiple
-						? !field.value.includes(opt)
-						: field.value !== opt;
-					if (notInOptions) {
-						option = opt;
-						break;
-					}
-				}
-				if (option) onSelectItem(option);
-			}
-		}
 	};
 
 	// Select item.
@@ -128,7 +108,6 @@
 			autocomplete="off"
 			placeholder={field.attributes.placeholder}
 			class:formly-required={isRequired(field) && !field.value}
-			on:keydown={handleTab}
 			on:keyup={refresh}
 			on:click={() => (showOptions = !showOptions)}
 			value={search}

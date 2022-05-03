@@ -1,30 +1,57 @@
 <script>
 	import { afterUpdate, createEventDispatcher } from 'svelte';
 	import { fly } from 'svelte/transition';
-	import { scanValue, clsx } from '../lib/helpers';
+	import { scanValue, clsx, dateFormatCorrect, getDateFromExpr } from '../lib/helpers';
 	import Input from './Input.svelte';
 	import Select from './Select.svelte';
 
 	// Declar variables.
 	export let field = {};
 	const defaultAttributes = {
-		type: 'text',
-		min: 0,
-		max: 1000000
+		type: 'text'
 	};
 
 	field.attributes = { ...defaultAttributes, ...field.attributes };
 	field.classes = field.classes ? field.classes : {};
 
+	const min =
+		parseInt(
+			field.rules
+				.filter((rule) => rule.startsWith('table:min'))
+				.map((rule) => rule.split(':')[2])[0]
+		) || 0;
+	const max =
+		parseInt(
+			field.rules
+				.filter((rule) => rule.startsWith('table:max'))
+				.map((rule) => rule.split(':')[2])[0]
+		) || 1000000;
+
 	// Dispatch.
 	const dispatch = createEventDispatcher();
 
+	function interprateValue(option, value) {
+		if (option.attributes?.type === 'date' && value && !dateFormatCorrect(value)) {
+			const [now, moment] = value.split(':');
+			return getDateFromExpr(now, moment).toISOString().slice(0, 10);
+		}
+
+		return value;
+	}
+
 	function addRow() {
 		if (!field.value) field.value = [];
-		if (field.value.length >= field.attributes.max) return;
+		if (field.value.length >= max) return;
 
-		const names = field.extra.options.map((option) => option.name);
-		field.value = [...field.value, Object.assign({}, ...names.map((n) => ({ [n]: null })))];
+		field.value = [
+			...field.value,
+			Object.assign(
+				{},
+				...field.extra.options.map((option) => ({
+					[option.name]: interprateValue(option, option.value)
+				}))
+			)
+		];
 
 		dispatch('changeValue', {
 			name: field.name,
@@ -34,7 +61,7 @@
 
 	function duplicateRow() {
 		if (!field.value) return;
-		if (field.value.length >= field.attributes.max) return;
+		if (field.value.length >= max) return;
 
 		const lastObject = { ...field.value[field.value.length - 1] };
 		field.value = [...field.value, lastObject];
@@ -46,7 +73,7 @@
 	}
 
 	function deleteRow(_, index) {
-		if (field.value.length <= field.attributes.min) return;
+		if (field.value.length <= min - 2) return;
 
 		if (field.value.length === 1) {
 			field.value = undefined;
@@ -73,10 +100,16 @@
 		});
 	}
 	function getOption(option, value, index) {
-		option.value = value;
-		option.id = `${field.name}_${index}_`;
-		option.classes = clsx(field.classes.input, option.attributes.classes)
-		return { ...option };
+		let newValue = value ? value : option.value;
+
+		newValue = interprateValue(option, value);
+
+		return {
+			...option,
+			value: newValue,
+			id: `${field.name}_${index}_`,
+			classes: clsx(field.classes.input, option.attributes.classes)
+		};
 	}
 
 	// Lifecycle.

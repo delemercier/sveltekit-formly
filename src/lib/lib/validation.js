@@ -17,7 +17,6 @@ export function validateFields(fields, values = undefined, customRules = undefin
 		: { ...fields };
 
 	const details = [];
-
 	const isNew = values.action === 'new';
 
 	Object.keys(result).map((key) => {
@@ -70,19 +69,32 @@ export function validate(field, values, customRules = undefined) {
 				arrayField = rule;
 				rule = args.shift();
 
-				if (value) {
-					value.forEach((v) => {
-						if (CoreRules[rule] === undefined) {
-							valid = customRules[rule].call(null, v[arrayField], args, values);
-						} else {
-							valid = CoreRules[rule].call(null, v[arrayField], args, values);
+				if (arrayField === 'table') {
+					if (CoreRules[rule] === undefined) {
+						valid = customRules[rule].call(null, value, args, values);
+					} else {
+						valid = CoreRules[rule].call(null, value, args, values);
+					}
+					if (!valid) {
+						if (!errors.includes(rule)) {
+							errors = [...errors, arrayField + ':' + rule];
 						}
-						if (!valid) {
-							if (!errors.includes(rule)) {
-								errors = [...errors, rule];
+					}
+				} else {
+					if (value) {
+						value.forEach((v) => {
+							if (CoreRules[rule] === undefined) {
+								valid = customRules[rule].call(null, v[arrayField], args, values);
+							} else {
+								valid = CoreRules[rule].call(null, v[arrayField], args, values);
 							}
-						}
-					});
+							if (!valid) {
+								if (!errors.includes(rule)) {
+									errors = [...errors, arrayField + ':' + rule];
+								}
+							}
+						});
+					}
 				}
 			} else {
 				if (CoreRules[rule] === undefined) {

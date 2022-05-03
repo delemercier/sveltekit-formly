@@ -1,8 +1,10 @@
 import { validateFields } from '$lib/index.js';
-import fields from '../fields.json';
+import fields from '/src/fields.json';
 export async function get() {
 	return {
-		body: fields
+		body: {
+			fields
+		}
 	};
 }
 
@@ -10,11 +12,10 @@ export async function post({ request }) {
 	const values = await request.json();
 
 	const validation = validateFields(fields, values);
+
 	if (validation.valid) {
 		return {
-			body: {
-				values
-			}
+			body: values
 		};
 	} else {
 		return {

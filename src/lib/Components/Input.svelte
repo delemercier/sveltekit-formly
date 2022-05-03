@@ -46,6 +46,7 @@
 	}
 
 	field.attributes = { ...defaultAttributes, ...field.attributes };
+	field.id ? field.id : '';
 
 	// Dispatch.
 	const dispatch = createEventDispatcher();
@@ -68,7 +69,7 @@
 	use:typeAction
 	name={field.name}
 	bind:value={field.value}
-	id="{field.id || ''}{field.name}"
+	id="{field.id}{field.name}"
 	class={field.classes}
 	class:formly-required={isRequired(field) && !field.value}
 	placeholder={field.attributes.placeholder}

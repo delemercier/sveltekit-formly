@@ -10,6 +10,7 @@
 	field.attributes = { ...fieldAttributes };
 
 	field.value ? field.value : field.extra.options[0].value;
+	field.id ? field.id : '';
 
 	// Dispatch.
 	const dispatch = createEventDispatcher();
@@ -48,7 +49,7 @@
 
 <select
 	name={field.name}
-	id="{field.id || ''}_{field.name}"
+	id="{field.id}{field.name}"
 	style={mode === 'table' ? 'width:95%' : ''}
 	class={field.classes}
 	class:formly-required={isRequired(field) && !field.value}

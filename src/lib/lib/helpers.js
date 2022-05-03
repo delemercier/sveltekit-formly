@@ -40,12 +40,8 @@ function clickOutside(node) {
 }
 
 function scanValue(type, value) {
-	let typeOfNumber = ['number', 'range'];
-	let newVal = null;
-	if (value) {
-		newVal = typeOfNumber.includes(type) ? parseInt(value) : value;
-	}
-	return newVal;
+	if (!value) return null;
+	return ['number', 'range'].includes(type) ? parseInt(value) : value;
 }
 
 function evaluate(expr, values) {
@@ -77,7 +73,15 @@ function getDateFromExpr(expression, moment = 'currentDay') {
 	if (moment === 'firstDay') {
 		day = 1;
 	}
+	if (moment === 'firstDayOfYear') {
+		day = 1;
+		month = 0;
+	}
 	if (moment === 'lastDay') {
+		day = new Date(Date.UTC(year, month + 1, 0)).getDate();
+	}
+	if (moment === 'lastDayOfYear') {
+		month = 11;
 		day = new Date(Date.UTC(year, month + 1, 0)).getDate();
 	}
 

@@ -2,7 +2,7 @@
 	{
 		"type": "section",
 		"name": "section1",
-		"title": "Section 1 guys !",
+		"title": "Section 1 can be reduced",
 		"open": "true",
 		"lock": "false"
 	},
@@ -10,46 +10,39 @@
 		"type": "table",
 		"name": "mytable",
 		"attributes": {
-			"tableClasses": {
-				"thead": "coucou"
-			},
-			"label": "Discount grid",
-			"min": 0,
-			"max": 3
+			"label": "Users table, min 1 row, max 3 rows"
 		},
+		"rules": ["required", "min:1", "max:3"],
 		"extra": {
 			"options": [
 				{
 					"type": "input",
-					"name": "field1",
+					"name": "firstName",
 					"attributes": {
-						"label": "Field 1"
+						"label": "First name"
 					},
 					"rules": ["required"]
 				},
 				{
 					"type": "input",
-					"name": "birth",
-					"value": "now",
+					"name": "birthDate",
+					"value": "now-20y:firstDayOfYear",
 					"attributes": {
 						"type": "date",
-						"label": "Date de naissance de ta vie de ouf"
+						"label": "Birth date"
 					},
-					"rules": ["date:now <= date <= now+1m:firstDay"]
+					"rules": ["date:now-120y <= date <= now"]
 				},
 				{
 					"type": "select",
 					"name": "country",
 					"rules": ["required"],
 					"attributes": {
-						"label": "select country très long ici"
+						"label": "Country"
 					},
+					"value": "EN",
 					"extra": {
 						"options": [
-							{
-								"value": null,
-								"title": "Select a country"
-							},
 							{
 								"value": "FR",
 								"title": "France"
@@ -67,48 +60,52 @@
 	{
 		"type": "checkbox",
 		"name": "check",
-		"value": [1, 2],
+		"value": [0, 1],
 		"attributes": {
-			"label": "Sélectionner une box",
-			"classes": "red"
+			"label": "Ice cream"
 		},
 		"rules": ["required"],
 		"extra": {
 			"options": [
 				{
-					"value": 1,
-					"title": "checkbox 1"
+					"value": 0,
+					"title": "Chocolate"
 				},
 				{
-					"value": 2
+					"value": 1,
+					"title": "Caramel"
+				},
+				{
+					"value": 2,
+					"title": "Coco"
 				}
 			]
 		}
 	},
 	{
 		"type": "textarea",
-		"name": "textarea",
-		"description": "Ceci est une description toto. en réalité c'est une très longue description",
+		"name": "textarea1",
+		"description": "This is a description of the field, I don't known how to style it properlty",
+		"value": "Default comment\nWith new line",
 		"rules": ["required"],
 		"attributes": {
-			"label": "Commentaire",
-			"ignored": "false",
+			"label": "Comment",
 			"canUpdate": "once"
 		}
 	},
 	{
 		"type": "radio",
-		"name": "radiofield",
-		"valueExpr": "1",
+		"name": "radio1",
+		"valueExpr": "1+1",
 		"extra": {
 			"options": [
 				{
 					"value": 1,
-					"title": "radio 1"
+					"title": "Male"
 				},
 				{
 					"value": 2,
-					"title": "radio 2"
+					"title": "Female"
 				}
 			]
 		}
@@ -116,45 +113,52 @@
 	{
 		"type": "section",
 		"name": "section2",
-		"title": "Section 2 guys !",
+		"title": "Section 2 locked openned",
 		"open": "true",
 		"lock": "true"
 	},
 	{
 		"type": "input",
-		"name": "birthdate",
+		"name": "dateLastDayOfMonth",
 		"value": "now:lastDay",
 		"attributes": {
 			"type": "date",
-			"label": "Entrer votre date de naissance"
+			"label": "Date last day of month"
 		},
-		"rules": ["required", "date:now <= date <= now+1m:firstDay"]
+		"rules": ["required", "date:now <= date:lastDay"]
+	},
+	{
+		"type": "input",
+		"name": "dateLastDayOfYear",
+		"value": "now:lastDayOfYear",
+		"attributes": {
+			"type": "date",
+			"label": "Date last day of year"
+		},
+		"rules": ["required", "date:now <= date:lastDay"]
 	},
 	{
 		"type": "input",
 		"name": "password",
-		"valueExpr": "`${v.textarea} ${v.check?.join(' - ')}`",
 		"attributes": {
-			"label": "Mot de passe"
+			"label": "Password"
 		},
 		"rules": ["required"]
 	},
 	{
 		"type": "input",
 		"name": "passwordConfirm",
-		"valueExpr": "v.password",
 		"attributes": {
-			"label": "Confirmer le mot de passe"
+			"label": "Confirm Password"
 		},
 		"rules": ["required", "confirm:password"]
 	},
 	{
 		"type": "input",
 		"name": "email",
-		"value": "toto@gmail.com",
+		"value": "test@mail.com",
 		"attributes": {
 			"type": "email",
-			"classes": "form-control input input-primary w-full",
 			"placeholder": "Email"
 		},
 		"rules": ["email"]
@@ -164,7 +168,7 @@
 		"name": "country",
 		"rules": ["required"],
 		"attributes": {
-			"label": "select country"
+			"label": "Select a country"
 		},
 		"valueExpr": "v.radiofield === 2 ? 'FR': 'EN'",
 		"extra": {
@@ -184,7 +188,7 @@
 				{
 					"value": "IT",
 					"title": "Italy",
-					"visible": "1 +1 === 32"
+					"visible": "1 + 1 === 32"
 				}
 			]
 		}
@@ -194,7 +198,7 @@
 		"name": "city",
 		"rules": ["required"],
 		"attributes": {
-			"label": "select city"
+			"label": "Select city (cascaded with country)"
 		},
 		"extra": {
 			"cascaded": "country",
@@ -219,8 +223,8 @@
 					"cascaded": "EN"
 				},
 				{
-					"value": "Newcastle",
-					"title": "Newcastle",
+					"value": "Liverpool",
+					"title": "Liverpool",
 					"cascaded": "EN"
 				}
 			]
@@ -228,32 +232,37 @@
 	},
 	{
 		"type": "select",
-		"name": "commune",
+		"name": "street",
 		"rules": ["required"],
 		"attributes": {
-			"label": "select commune"
+			"label": "Select street (cascaded with city)"
 		},
 		"extra": {
 			"cascaded": "city",
 			"options": [
 				{
 					"value": null,
-					"title": "Select a commune"
+					"title": "Select a street"
 				},
 				{
-					"value": "Clichy",
-					"title": "Clichy",
+					"value": "Champs-Elysées",
+					"title": "Champs-Elysées",
 					"cascaded": "Paris"
 				},
 				{
-					"value": "Janzé",
-					"title": "Janzé",
+					"value": "Rue de la soif",
+					"title": "Rue de la soif",
 					"cascaded": "Rennes"
 				},
 				{
-					"value": "Saint-Grégoire",
-					"title": "Saint-Grégoire",
-					"cascaded": "Rennes"
+					"value": "Downing Street",
+					"title": "Downing Street",
+					"cascaded": "London"
+				},
+				{
+					"value": "Mathew Street",
+					"title": "Mathew Street",
+					"cascaded": "Liverpool"
 				}
 			]
 		}
@@ -263,8 +272,8 @@
 		"name": "autocomplete",
 		"rules": ["required"],
 		"attributes": {
-			"id": "id-field-autocomplete",
-			"placeholder": "Insert",
+			"placeholder": "Search for items",
+			"label": "Autocomplete search input",
 			"max": 10
 		},
 		"extra": {

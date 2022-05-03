@@ -1,5 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
+	import { fly } from 'svelte/transition';
 	import { validate } from '../lib/validation.js';
 	import { valuesForm } from '../lib/stores.js';
 	import { evaluate, getDateFromExpr, dateFormatCorrect, hasChanged } from '../lib/helpers.js';
@@ -30,7 +31,7 @@
 	};
 
 	let defaultMessages = {
-		required: 'Field required',
+		required: 'Field {name} required',
 		min: 'Min is {1}',
 		max: 'Max is {1}',
 		between: 'Between {1} and {2}',
@@ -188,9 +189,14 @@
 			field.validation = { errors: [], dirty: false };
 
 			if (field.type === 'table') {
-				field.rules = field.extra.options.flatMap((option) =>
-					option.rules.map((r) => `${option.name}:${r}`)
-				);
+				if (!field.rules) field.rules = [];
+
+				field.rules = [
+					...field.extra.options.flatMap((option) =>
+						option.rules.map((r) => `${option.name}:${r}`)
+					),
+					...field.rules.map((rule) => 'table:' + rule)
+				];
 			}
 
 			if (field.attributes.type === 'date' && isNew()) {
@@ -252,21 +258,28 @@
 		else forceSections[section] = !forceSections[section];
 	}
 
-	const interpolate = (str, args) => {
-		return str.replace(/{([0-9]+)}/g, function (match, index) {
+	const interpolate = (str, args, name) => {
+		return str.replace('{name}', name).replace(/{([0-9]+)}/g, function (match, index) {
 			return typeof args[index] == 'undefined' ? match : args[index];
 		});
 	};
 
 	const print = (field, error) => {
-		const msg = field.messages[error];
+		let msg = field.messages[error];
+		let fieldName = field.name;
+
+		if (error.includes(':')) {
+			const [name, err] = error.split(':');
+			fieldName = name;
+			msg = field.messages[err];
+		}
+
 		if (msg === undefined) return '';
 		for (const rule of field.rules) {
 			if (rule.startsWith(error)) {
-				return interpolate(msg, rule.split(':'));
+				return interpolate(msg, rule.split(':'), fieldName);
 			}
 		}
-
 		return msg;
 	};
 </script>
@@ -275,13 +288,14 @@
 	{#if field.type === 'section'}
 		<div
 			class={field.classes}
+			style="cursor:pointer"
 			id={field.name}
 			on:click={() => toggleSection(field.name, field.lock)}
 		>
 			{field.title}
 		</div>
 	{:else if evaluate(field.attributes.visible, values) && forceSections[field.section] === undefined ? evaluate(sections[field.section], values) : forceSections[field.section]}
-		<div>
+		<div transition:fly={{ y: -20, duration: 250 }}>
 			<!-- Label -->
 			{#if field.attributes && field.attributes.label}
 				<label for={field.name} style="display: block">

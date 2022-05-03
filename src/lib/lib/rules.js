@@ -2,6 +2,7 @@ import { dateFormatCorrect, getDateFromExpr } from './helpers';
 
 export function required(val) {
 	if (!val) return false;
+	if (Array.isArray(val)) return val.length > 0;
 	return typeof val === 'string' ? !/^\s*$/.test(val) : true;
 }
 
@@ -28,12 +29,16 @@ export function email(val) {
 
 export function max(val, args) {
 	if (!val) return true;
+	if (Array.isArray(val)) return val.length <= parseFloat(args[0]);
+
 	const value = isNaN(val) ? val.length : parseFloat(val);
 	return isNaN(value) ? true : value <= parseFloat(args[0]);
 }
 
 export function min(val, args) {
 	if (!val) return true;
+	if (Array.isArray(val)) return val.length >= parseFloat(args[0]);
+
 	const value = isNaN(val) ? val.length : parseFloat(val);
 	return value >= parseFloat(args[0]);
 }
